@@ -1,14 +1,14 @@
-const config = require("../../constants/constants");
-const pool = require("../../config/pool");
+const config = require("../../../constants/constants");
+const pool = require("../../../config/pool");
 const bcrypt = require("bcrypt");
-// const convertUTCtoIST = require('../../utils/helperfunction/convertUTCtoIST')
+const jwt = require('jsonwebtoken');
 const {
   success,
   failure,
   unauthorized,
   validationFailed,
-} = require("../../utils/response");
-const { convertUTCtoIST } = require("../../utils/helperfunction");
+} = require("../../../utils/response");
+const { convertUTCtoIST } = require("../../../utils/helperfunction");
 
 module.exports = {
   getUsers: async (req, res) => {
@@ -90,10 +90,20 @@ module.exports = {
             uid: user.userId,
             email: user.email,
           };
+          const payload = {
+               id: user.userId,
+               role: user.role
+            }
+            const token = jwt.sign(
+            payload, 
+            process.env.JWT_SECRET, 
+            { expiresIn: process.env.JWT_EXPIRES_IN }
+        );
           return success(res, "Login successful", {
             userId: user.userId,
             email: user.email,
             role: user.role,
+            token: token
           });
         }else {
         return unauthorized(res, "Invalid password", {});
@@ -126,6 +136,56 @@ module.exports = {
 
     }catch(e){
       return failure(res, e.sql, e.message);
+    }
+  },
+
+
+  deleteUser : async(req,res) =>{
+    const uid = req.params.id;
+    try {
+      const result = await pool.query(`UPDATE users SET isActive = 0 WHERE userId = ?`, [uid])
+    if(result[0].affectedRows <=0){
+      return unauthorized(res, "User not found", {})
+    }else{
+      return success(res,"User deleted successfully", result);
+    }
+    } catch (err) {
+      return failure(res,err.sql,err.message);
+    }
+    
+  },
+
+  updateUser: async (req,res)=>{
+    const uid = req.params.id;
+    const {name, mobile, email, password} = req.body;
+    const key = [];
+    const value = [];
+    if(name !== undefined && name !== null && name !== ""){
+      key.push("fullName = ?");
+      value.push(name);
+    }
+    if(mobile !== undefined && mobile !== null && mobile !== ""){
+      key.push("mobileNo = ?");
+      value.push(mobile);
+    }
+    if(email !== undefined && email !== null && email !== ""){
+      key.push("email = ?");
+      value.push(email);
+    }
+    if(password !== undefined && password !== null && password !== ""){
+       const hashedPassword = await bcrypt.hash(password, config.SALT_ROUNDS);
+      key.push("password = ?");
+      value.push(hashedPassword);
+    }
+    try {
+      const result = await pool.query(`UPDATE users SET ${key.join(", ")} WHERE userId = ?`,[...value,uid]);
+      if(result[0].affectedRows <=0){
+        return unauthorized(res,"User not found", {});
+      }else{
+        return success(res,"User updated successfully", result);
+      }
+    } catch (err) {
+      return failure(res,err.sql,err.message);
     }
   }
 };
