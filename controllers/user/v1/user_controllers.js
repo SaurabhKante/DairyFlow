@@ -27,8 +27,6 @@ module.exports = {
       })
       return success(res, "Users fetched successfully", result);
     } catch (err) {
-      console.log("ERROR:", err);
-
       return failure(res, "Error while finding users", err.message);
     }
   },
@@ -50,8 +48,6 @@ module.exports = {
       );
       return success(res, "User Created Successfully", result);
     } catch (err) {
-      console.log("LOGIN ERROR:", err);
-
       return failure(res, "Error while Sign up", err.message);
     }
   },
@@ -113,8 +109,6 @@ module.exports = {
       }
 
     } catch (err) {
-      console.log("LOGIN ERROR:", err);
-
       return failure(res, "Error while logging in", err.message);
     }
   },
@@ -188,4 +182,4 @@ module.exports = {
       return failure(res,err.sql,err.message);
     }
   }
-};
+}; 
