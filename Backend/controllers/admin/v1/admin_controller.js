@@ -3,6 +3,7 @@ const { convertUTCtoIST } = require("../../../utils/helperfunction");
 const { success, failure, validationFailed } = require("../../../utils/response");
 
 module.exports = {
+  // farmers
   getMilkPurchaseSummary: async (req, res) => {
     try {
       const [result] = await pool.query(`
@@ -206,4 +207,18 @@ module.exports = {
       connection.release();
     }
   },
+
+  // customers
+  getMilkSellSumary: async (req, resp) => {
+
+  },
+
+  getCustomerMilkSells: async (req, resp) => {
+
+  },
+  
+  customerBill: async (req, resp) => {
+
+  }
+  
 };
