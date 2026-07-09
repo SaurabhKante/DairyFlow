@@ -208,7 +208,7 @@ module.exports = {
   },
 
   // customers
-  getMilkSellSumary: async (req, resp) => {
+  getMilkSellSummary: async (req, resp) => {
      try {
       const [result] = await pool.query(`
         SELECT
