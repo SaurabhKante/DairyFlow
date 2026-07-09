@@ -43,6 +43,7 @@ const LoginForm = () => {
     if (result.SUCCESS) {
       // Save token
       localStorage.setItem("token", result.DATA.token);
+      localStorage.setItem("role", result.DATA.role);
 
       // Save logged-in user details
       localStorage.setItem("user", JSON.stringify(result.DATA));
@@ -155,18 +156,6 @@ const LoginForm = () => {
           )}
         </button>
 
-        <p className="text-center text-gray-500">
-
-          Don't have an account?{" "}
-
-          <a
-            href="#"
-            className="text-blue-700 font-semibold"
-          >
-            Register
-          </a>
-
-        </p>
 
       </form>
 

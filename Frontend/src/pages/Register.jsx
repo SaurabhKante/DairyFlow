@@ -1,10 +1,33 @@
 import RegisterHeader from "../components/register/RegisterHeader";
 import RegisterForm from "../components/register/RegisterForm";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 const Register = () => {
+  const navigate = useNavigate();
   return (
+    
     <div className="min-h-screen flex flex-col bg-[#f8f9ff] overflow-hidden relative">
       {/* Background Blur Effects */}
+
+<header className="sticky top-0 z-40 bg-white border-b border-gray-200 flex items-center justify-between px-4 h-14 shadow-sm">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition"
+      >
+        <ArrowLeft size={22} className="text-blue-700" />
+      </button>
+
+      {/* Title */}
+      <h1 className="text-xl font-bold text-blue-700">
+        Register User
+      </h1>
+
+      {/* Empty div for alignment */}
+      <div className="w-10" />
+    </header>
+
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-blue-200/40 blur-3xl"></div>
 

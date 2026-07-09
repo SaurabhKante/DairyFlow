@@ -39,10 +39,15 @@ const RegisterForm = () => {
         email,
         password,
       };
-
+const token = localStorage.getItem("token");
       const response = await axios.post(
         `${BASE_URL}/user/v1/sign-up`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       const result = response.data;
@@ -50,7 +55,7 @@ const RegisterForm = () => {
       if (result.SUCCESS) {
         alert(result.MESSAGE || "Registration Successful");
 
-        navigate("/");
+        navigate("/users");
       } else {
         alert(result.MESSAGE);
       }

@@ -6,6 +6,11 @@ import Home from './pages/Home'
 import ProtectedRoute from './apiRouter/ProtectedRoute'
 import PublicRoute from './apiRouter/PublicRoute'
 import Register from './pages/Register'
+import Profile from './pages/Profile'
+import UpdateProfile from './pages/UpdateProfile'
+import UserManagement from './pages/UserManagement'
+import Unauthorized from './pages/Unauthorized'
+import AdminRoute from './pages/AdminRoute'
 
 function App() {
 
@@ -29,7 +34,30 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/update-profile" element={<UpdateProfile />} />
+        <Route
+    path="/users"
+    element={
+        <AdminRoute>
+            <UserManagement />
+        </AdminRoute>
+    }
+/>
+
+<Route
+    path="/register"
+    element={
+        <AdminRoute>
+            <Register />
+        </AdminRoute>
+    }
+/>
+
+<Route
+    path="/unauthorized"
+    element={<Unauthorized />}
+/>
       </Routes>
     </>
   )
