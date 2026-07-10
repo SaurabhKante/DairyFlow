@@ -54,6 +54,7 @@ module.exports = {
                 mp.quantity,
                 mr.farmerRate,
                 mp.totalAmount,
+                mp.paymentId,
                 mp.remarks,
                 mp.createdAt,
                 mp.modifiedAt

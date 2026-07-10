@@ -11,6 +11,10 @@ import UpdateProfile from './pages/UpdateProfile'
 import UserManagement from './pages/UserManagement'
 import Unauthorized from './pages/Unauthorized'
 import AdminRoute from './pages/AdminRoute'
+import FarmerList from './pages/FarmerList'
+import AddFarmer from './pages/AddFarmer'
+import RecordMilkIntake from './pages/RecordMilkIntake'
+import PayFarmer from './pages/PayFarmer'
 
 function App() {
 
@@ -36,11 +40,30 @@ function App() {
         />
         <Route path="/profile" element={<Profile />} />
         <Route path="/update-profile" element={<UpdateProfile />} />
+        <Route path="/farmer-list" element={<FarmerList />} />
+        <Route path="/record-intake/:id" element={<RecordMilkIntake />}
+/>
         <Route
     path="/users"
     element={
         <AdminRoute>
             <UserManagement />
+        </AdminRoute>
+    }
+/>
+        <Route
+    path="/pay-farmer/:farmerId"
+    element={
+        <AdminRoute>
+            <PayFarmer />
+        </AdminRoute>
+    }
+/>
+        <Route
+    path="/add-farmer"
+    element={
+        <AdminRoute>
+            <AddFarmer />
         </AdminRoute>
     }
 />

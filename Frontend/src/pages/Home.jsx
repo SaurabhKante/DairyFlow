@@ -5,8 +5,9 @@ import { Tractor, Truck } from "lucide-react";
 import TopNavbar from "../components/home/TopNavbar";
 import QuickActionCard from "../components/home/QuickActionCard";
 import BottomNavbar from "../components/home/BottomNavbar";
+import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../constants/baseUrl";
 
-const BASE_URL = "http://localhost:3000/api";
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -14,7 +15,7 @@ const Home = () => {
   useEffect(() => {
     getProfile();
   }, []);
-
+  
   const getProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -41,7 +42,7 @@ const Home = () => {
       }
     }
   };
-
+const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
 
@@ -80,7 +81,7 @@ const Home = () => {
               iconColor="text-green-700"
               borderColor="border-green-300"
               onClick={() => {
-                console.log("Farmer Intake");
+                navigate("/farmer-list")
               }}
             />
 
