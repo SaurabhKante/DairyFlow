@@ -209,7 +209,7 @@ module.exports = {
   },
 
   // customers
-  getMilkSellSummary: async (req, resp) => {
+  getMilkSellSummary: async (req, res) => {
      try {
       const [result] = await pool.query(`
         SELECT
@@ -219,7 +219,7 @@ module.exports = {
           SUM(ms.quantity) AS totalQuantity,
           SUM(ms.totalAmount) AS totalAmount
         FROM customers c
-        INNER JOIN milk_sales ms
+        INNER JOIN milk_sells ms
           ON c.customerId = ms.customerId
         WHERE
           c.isActive = 1
@@ -240,10 +240,10 @@ module.exports = {
     } catch (err) {
       return failure(res, err.sql, err.message);
   }
-
   },
+  
 
-  getCustomerMilkSells: async (req, resp) => {
+  getCustomerMilkSells: async (req, res) => {
     const customerId = req.params.id;
   const { startDate, endDate } = req.body;
 
@@ -260,22 +260,23 @@ module.exports = {
         `
         SELECT
           ms.saleId,
-          ms.saleDate,
+          ms.createdAt,
           ms.quantity,
           mr.customerRate,
           ms.totalAmount,
+          ms.paymentId,
           ms.remarks,
           ms.createdAt,
           ms.modifiedAt
-        FROM milk_sales ms
+        FROM milk_sells ms
         INNER JOIN milk_rates mr
           ON ms.rateId = mr.rateId
         WHERE
           ms.customerId = ?
           AND ms.isActive = 1
-          AND ms.saleDate BETWEEN ? AND ?
+          AND DATE(ms.createdAt) BETWEEN ? AND ?
         ORDER BY
-          ms.saleDate DESC
+          ms.createdAt DESC
         `,
         [customerId, startDate, endDate]
       );
@@ -285,11 +286,12 @@ module.exports = {
         SELECT
           COALESCE(SUM(quantity),0) AS totalQuantity,
           COALESCE(SUM(totalAmount),0) AS totalAmount
-        FROM milk_sales
+        FROM milk_sells
         WHERE
           customerId = ?
           AND isActive = 1
-          AND saleDate BETWEEN ? AND ?
+          AND paymentId IS NULL
+          AND DATE(createdAt) BETWEEN ? AND ?
         `,
         [customerId, startDate, endDate]
       );
@@ -309,7 +311,7 @@ module.exports = {
 
   },
   
-  customerBill: async (req, resp) => {
+  customerBill: async (req, res) => {
     const customerId = req.params.id;
     const createdBy = req.user.id;
 
@@ -341,11 +343,12 @@ module.exports = {
         SELECT
           COALESCE(SUM(quantity),0) AS totalQuantity,
           COALESCE(SUM(totalAmount),0) AS totalAmount
-        FROM milk_sales
+        FROM milk_sells
         WHERE
           customerId = ?
+          AND paymentId IS NULL
           AND isActive = 1
-          AND saleDate BETWEEN ? AND ?
+          AND DATE(createdAt) BETWEEN ? AND ?
         `,
         [customerId, startDate, endDate]
       );
@@ -385,6 +388,22 @@ module.exports = {
           remarks,
           createdBy,
         ]
+      );
+
+       const paymentId = payment.insertId;
+
+      // Link purchases to payment
+      await connection.query(
+        `
+            UPDATE milk_sells
+            SET paymentId = ?
+            WHERE
+                customerId = ?
+                AND paymentId IS NULL
+                AND isActive = 1
+                AND DATE(createdAt) BETWEEN ? AND ?
+            `,
+        [paymentId, customerId, startDate, endDate],
       );
 
       await connection.commit();

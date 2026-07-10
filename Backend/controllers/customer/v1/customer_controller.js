@@ -93,5 +93,80 @@ module.exports={
         } catch(err){
             return failure(resp, err.sql, err.message);
         } 
-    }
+    },
+
+    addMilkSells: async (req, res) => {
+
+        const fid = req.params.id;
+        const { quantity, remarks } = req.body;
+        const createdBy = req.user.id;
+
+        if (!quantity || quantity <= 0) {
+            return validationFailed(
+                res,
+                "Quantity is required.",
+                {}
+            );
+        }
+
+        try {
+            const [rate] = await pool.query(
+                `SELECT rateId, customerRate
+                FROM milk_rates
+                WHERE isActive = 1
+                ORDER BY effectiveFrom DESC
+                LIMIT 1`
+            );
+
+            if (rate.length === 0) {
+                return validationFailed(
+                    res,
+                    "No active milk rate found.",
+                    {}
+                );
+            }
+
+            const rateId = rate[0].rateId;
+            const customerRate = parseFloat(rate[0].customerRate);
+
+            const totalAmount = Number(quantity) * customerRate;
+
+            const [result] = await pool.query(
+                `INSERT INTO milk_sells
+                (
+                    customerId,
+                    quantity,
+                    rateId,
+                    totalAmount,
+                    remarks,
+                    createdBy
+                )
+                VALUES (?,?,?,?,?,?)`,
+                [
+                    fid,
+                    quantity,
+                    rateId,
+                    totalAmount,
+                    remarks,
+                    createdBy
+                ]
+            );
+
+            return success(
+                res,
+                "Milk Sells Record Added Successfully",
+                result
+            );
+
+        } catch (err) {
+
+            return failure(
+                res,
+                err.sql,
+                err.message
+            );
+
+        }
+
+    },
 }

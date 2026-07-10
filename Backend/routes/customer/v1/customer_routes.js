@@ -1,4 +1,4 @@
-const { addCustomer, getAllCustomers, getCustomer, deleteCustomer, updateCustomer } = require('../../../controllers/customer/v1/customer_controller');
+const { addCustomer, getAllCustomers, getCustomer, deleteCustomer, updateCustomer, addMilkSells } = require('../../../controllers/customer/v1/customer_controller');
 const { verifyToken, checkAdmin } = require('../../../middleware/auth');
 
 const router = require('express').Router();
@@ -161,5 +161,6 @@ router.delete('/delete-customer/:id', verifyToken, checkAdmin, deleteCustomer);
  *         description: Customer not found.
  */
 router.post('/update-customer/:id', verifyToken,checkAdmin, updateCustomer);
+router.post('/milk-sells/:id', verifyToken, addMilkSells);
 
 module.exports = router;
