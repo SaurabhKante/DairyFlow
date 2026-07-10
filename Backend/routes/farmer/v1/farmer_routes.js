@@ -12,7 +12,7 @@ const router = require('express').Router();
 
 /**
  * @swagger
- * /add-farmer:
+ * /api/farmer/v1/add-farmer:
  *   post:
  *     summary: Create a new farmer
  *     description: Creates a new farmer. Admin access required.
@@ -50,7 +50,7 @@ const router = require('express').Router();
 router.post("/add-farmer",verifyToken, checkAdmin, addFarmer);
 /**
  * @swagger
- * /get-all-farmers:
+ * /api/farmer/v1/get-all-farmers:
  *   get:
  *     summary: Get all active farmers
  *     description: Returns all active farmers.
@@ -67,7 +67,7 @@ router.post("/add-farmer",verifyToken, checkAdmin, addFarmer);
 router.get('/get-all-farmers', verifyToken, getAllFarmers);
 /**
  * @swagger
- * /get-farmer/{id}:
+ * /api/farmer/v1/get-farmer/{id}:
  *   get:
  *     summary: Get farmer by ID
  *     description: Fetch a farmer using Farmer ID.
@@ -94,7 +94,7 @@ router.get('/get-all-farmers', verifyToken, getAllFarmers);
 router.get('/get-farmer/:id', verifyToken, getFarmer);
 /**
  * @swagger
- * /delete-farmer/{id}:
+ * /api/farmer/v1/delete-farmer/{id}:
  *   delete:
  *     summary: Delete farmer
  *     description: Soft deletes a farmer by setting isActive to 0. Admin access required.
@@ -121,7 +121,7 @@ router.get('/get-farmer/:id', verifyToken, getFarmer);
 router.delete('/delete-farmer/:id', verifyToken, checkAdmin, deleteFarmer);
 /**
  * @swagger
- * /update-farmer/{id}:
+ * /api/farmer/v1/update-farmer/{id}:
  *   post:
  *     summary: Update farmer
  *     description: Updates farmer information. Admin access required.
@@ -164,7 +164,7 @@ router.delete('/delete-farmer/:id', verifyToken, checkAdmin, deleteFarmer);
 router.post('/update-farmer/:id', verifyToken,checkAdmin, updateFarmer);
 /**
  * @swagger
- * /milk-purchase/{id}:
+ * /api/farmer/v1/milk-purchase/{id}:
  *   post:
  *     summary: Add milk purchase
  *     description: Adds a milk purchase entry for a farmer using the latest active milk rate.

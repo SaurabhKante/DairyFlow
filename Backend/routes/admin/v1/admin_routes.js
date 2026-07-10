@@ -11,7 +11,7 @@ const router = require('express').Router();
 
 /**
  * @swagger
- * /get-milk-purchase-summary:
+ * /api/admin/v1/get-milk-purchase-summary:
  *   get:
  *     summary: Get milk purchase summary
  *     description: Returns total milk purchased and total payable amount grouped by farmers.
@@ -32,7 +32,7 @@ router.get("/get-milk-purchase-summary",
 );
 /**
  * @swagger
- * /get-farmer-milk-purchase/{id}:
+ * /api/admin/v1/get-farmer-milk-purchase/{id}:
  *   post:
  *     summary: Get farmer milk purchase details
  *     description: Returns all milk purchase entries along with purchase summary for a farmer within the selected date range.
@@ -81,7 +81,7 @@ router.post("/get-farmer-milk-purchase/:id",
 );
 /**
  * @swagger
- * /pay-farmer/{id}:
+ * /api/admin/v1/pay-farmer/{id}:
  *   post:
  *     summary: Pay farmer
  *     description: Generates payment for all pending milk purchases of a farmer within the selected date range.
@@ -143,7 +143,7 @@ router.post("/pay-farmer/:id",
 );
 /**
  * @swagger
- * /get-milk-sell-summary:
+ * /api/admin/v1/get-milk-sell-summary:
  *   get:
  *     summary: Get milk sales summary
  *     description: Returns total milk sold and total receivable amount grouped by customers.
@@ -165,7 +165,7 @@ router.get(
 );
 /**
  * @swagger
- * /get-customer-milk-sells/{id}:
+ * /api/admin/v1/get-customer-milk-sells/{id}:
  *   post:
  *     summary: Get customer milk sales
  *     description: Returns all milk sale entries along with sales summary for a customer within the selected date range.
@@ -215,7 +215,7 @@ router.post(
 );
 /**
  * @swagger
- * /customer-bill/{id}:
+ * /api/admin/v1/customer-bill/{id}:
  *   post:
  *     summary: Generate customer bill
  *     description: Generates a payment entry for a customer's milk sales within the selected date range.

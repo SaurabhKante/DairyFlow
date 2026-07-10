@@ -12,7 +12,7 @@ const router = require('express').Router();
 
 /**
  * @swagger
- * /get-users:
+ * /api/user/v1/get-users:
  *   get:
  *     summary: Get all active users
  *     description: Returns all active users. Admin access required.
@@ -29,7 +29,7 @@ const router = require('express').Router();
 router.get('/get-users',verifyToken,checkAdmin, getUsers);
 /**
  * @swagger
- * /login-user:
+ * /api/user/v1/login-user:
  *   post:
  *     summary: Login user
  *     description: Authenticates a user and returns a JWT token.
@@ -62,7 +62,7 @@ router.get('/get-users',verifyToken,checkAdmin, getUsers);
 router.post('/login-user', loginUser);
 /**
  * @swagger
- * /sign-up:
+ * /api/user/v1/sign-up:
  *   post:
  *     summary: Create a new user
  *     description: Creates a new user. Only Admin can create users.
@@ -105,7 +105,7 @@ router.post('/login-user', loginUser);
 router.post('/sign-up',verifyToken,checkAdmin, addUser);
 /**
  * @swagger
- * /update-role/{id}:
+ * /api/user/v1/update-role/{id}:
  *   put:
  *     summary: Change user role
  *     description: Updates the role of a user. Only Admin can perform this operation.
@@ -145,7 +145,7 @@ router.post('/sign-up',verifyToken,checkAdmin, addUser);
 router.put('/update-role/:id',verifyToken,checkAdmin, changeRole);
 /**
  * @swagger
- * /delete-user/{id}:
+ * /api/user/v1/delete-user/{id}:
  *   delete:
  *     summary: Delete user
  *     description: Soft deletes a user by setting isActive to 0. Only Admin can perform this operation.
@@ -170,7 +170,7 @@ router.put('/update-role/:id',verifyToken,checkAdmin, changeRole);
 router.delete('/delete-user/:id',verifyToken,checkAdmin, deleteUser);
 /**
  * @swagger
- * /update-user:
+ * /api/user/v1/update-user:
  *   put:
  *     summary: Update logged in user
  *     description: Updates profile details of the currently logged in user.
@@ -206,7 +206,7 @@ router.delete('/delete-user/:id',verifyToken,checkAdmin, deleteUser);
 router.put('/update-user',verifyToken, updateUser);
 /**
  * @swagger
- * /get-profile:
+ * /api/user/v1/get-profile:
  *   get:
  *     summary: Get logged in user's profile
  *     description: Returns profile details of the currently logged in user.

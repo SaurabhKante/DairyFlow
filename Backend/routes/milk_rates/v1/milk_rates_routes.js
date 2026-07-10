@@ -11,7 +11,7 @@ const router  = require('express').Router();
 
 /**
  * @swagger
- * /get-rates:
+ * /api/milk-rates/v1/get-rates:
  *   get:
  *     summary: Get all active milk rates
  *     description: Returns all active milk rates.
@@ -28,7 +28,7 @@ const router  = require('express').Router();
 router.get('/get-rates', verifyToken,checkAdmin,getMilkRate)
 /**
  * @swagger
- * /update-rates/{id}:
+ * /api/milk-rates/v1/update-rates/{id}:
  *   post:
  *     summary: Update milk rate
  *     description: Updates farmer rate and/or customer rate of an existing milk rate.
@@ -72,7 +72,7 @@ router.get('/get-rates', verifyToken,checkAdmin,getMilkRate)
 router.post('/update-rates/:id', verifyToken,checkAdmin, updateMilkRate)
 /**
  * @swagger
- * /delete-rates/{id}:
+ * /api/milk-rates/v1/delete-rates/{id}:
  *   delete:
  *     summary: Delete milk rate
  *     description: Soft deletes a milk rate by setting isActive to 0.
@@ -99,7 +99,7 @@ router.post('/update-rates/:id', verifyToken,checkAdmin, updateMilkRate)
 router.delete('/delete-rates/:id', verifyToken, checkAdmin, deleteMilkRate);
 /**
  * @swagger
- * /add-rates:
+ * /api/milk-rates/v1/add-rates:
  *   post:
  *     summary: Add milk rate
  *     description: Creates a new milk rate for the current date. Only one active milk rate can exist per day.

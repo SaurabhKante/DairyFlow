@@ -11,7 +11,7 @@ const router = require('express').Router();
 
 /**
  * @swagger
- * /add-customer:
+ * /api/customer/v1/add-customer:
  *   post:
  *     summary: Create a new customer
  *     description: Creates a new customer. Admin access required.
@@ -49,7 +49,7 @@ const router = require('express').Router();
 router.post("/add-customer",verifyToken, checkAdmin, addCustomer);
 /**
  * @swagger
- * /get-all-customers:
+ * /api/customer/v1/get-all-customers:
  *   get:
  *     summary: Get all active customers
  *     description: Returns all active customers.
@@ -66,7 +66,7 @@ router.post("/add-customer",verifyToken, checkAdmin, addCustomer);
 router.get('/get-all-customers', verifyToken, getAllCustomers);
 /**
  * @swagger
- * /get-customer/{id}:
+ * /api/customer/v1/get-customer/{id}:
  *   get:
  *     summary: Get customer by ID
  *     description: Returns customer details using Customer ID.
@@ -93,7 +93,7 @@ router.get('/get-all-customers', verifyToken, getAllCustomers);
 router.get('/get-customer/:id', verifyToken, getCustomer);
 /**
  * @swagger
- * /delete-customer/{id}:
+ * /api/customer/v1/delete-customer/{id}:
  *   delete:
  *     summary: Delete customer
  *     description: Soft deletes a customer by setting isActive to 0. Admin access required.
@@ -120,7 +120,7 @@ router.get('/get-customer/:id', verifyToken, getCustomer);
 router.delete('/delete-customer/:id', verifyToken, checkAdmin, deleteCustomer);
 /**
  * @swagger
- * /update-customer/{id}:
+ * /api/customer/v1/update-customer/{id}:
  *   post:
  *     summary: Update customer
  *     description: Updates customer information. Admin access required.
