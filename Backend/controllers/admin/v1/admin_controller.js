@@ -150,8 +150,7 @@ module.exports = {
 
       // Insert payment
       const [payment] = await connection.query(
-        `
-            INSERT INTO farmer_payments
+        `INSERT INTO farmer_payments
             (
                 farmerId,
                 startDate,
@@ -195,10 +194,10 @@ module.exports = {
       await connection.commit();
 
       return success(res, "Farmer payment completed successfully.", {
-        paymentId,
-        totalQuantity: summary[0].totalQuantity,
-        totalAmount: summary[0].totalAmount,
-      });
+          paymentId,
+          totalQuantity: summary[0].totalQuantity,
+          totalAmount: summary[0].totalAmount,
+        });
     } catch (err) {
       await connection.rollback();
 
@@ -209,15 +208,197 @@ module.exports = {
   },
 
   // customers
-  getMilkSellSumary: async (req, resp) => {
+  getMilkSellSummary: async (req, resp) => {
+     try {
+      const [result] = await pool.query(`
+        SELECT
+          c.customerId,
+          c.customerName,
+          c.mobileNo,
+          SUM(ms.quantity) AS totalQuantity,
+          SUM(ms.totalAmount) AS totalAmount
+        FROM customers c
+        INNER JOIN milk_sales ms
+          ON c.customerId = ms.customerId
+        WHERE
+          c.isActive = 1
+          AND ms.isActive = 1
+        GROUP BY
+          c.customerId,
+          c.customerName,
+          c.mobileNo
+        ORDER BY
+          c.customerName ASC
+      `);
+
+      if (result.length === 0) {
+        return success(res, "No Milk Sales Found", []);
+      }
+
+      return success(res, "Milk Sales Summary Fetched Successfully", result);
+    } catch (err) {
+      return failure(res, err.sql, err.message);
+  }
 
   },
 
   getCustomerMilkSells: async (req, resp) => {
+    const customerId = req.params.id;
+  const { startDate, endDate } = req.body;
+
+  if (!startDate || !endDate) {
+    return validationFailed(
+      res,
+      "Start Date and End Date are required.",
+      {}
+    );
+  }
+
+  try {
+    const [result] = await pool.query(
+        `
+        SELECT
+          ms.saleId,
+          ms.saleDate,
+          ms.quantity,
+          mr.customerRate,
+          ms.totalAmount,
+          ms.remarks,
+          ms.createdAt,
+          ms.modifiedAt
+        FROM milk_sales ms
+        INNER JOIN milk_rates mr
+          ON ms.rateId = mr.rateId
+        WHERE
+          ms.customerId = ?
+          AND ms.isActive = 1
+          AND ms.saleDate BETWEEN ? AND ?
+        ORDER BY
+          ms.saleDate DESC
+        `,
+        [customerId, startDate, endDate]
+      );
+
+      const [summary] = await pool.query(
+        `
+        SELECT
+          COALESCE(SUM(quantity),0) AS totalQuantity,
+          COALESCE(SUM(totalAmount),0) AS totalAmount
+        FROM milk_sales
+        WHERE
+          customerId = ?
+          AND isActive = 1
+          AND saleDate BETWEEN ? AND ?
+        `,
+        [customerId, startDate, endDate]
+      );
+
+      result.forEach((item) => {
+        item.createdAt = convertUTCtoIST(item.createdAt);
+        item.modifiedAt = convertUTCtoIST(item.modifiedAt);
+      });
+
+      return success(res, "Customer Milk Sales Fetched Successfully", {
+        summary: summary[0],
+        sales: result,
+      });
+    } catch (err) {
+      return failure(res, err.sql, err.message);
+  }
 
   },
   
   customerBill: async (req, resp) => {
+    const customerId = req.params.id;
+    const createdBy = req.user.id;
+
+    const {
+      startDate,
+      endDate,
+      paymentDate = new Date().toLocaleDateString("en-CA", {
+        timeZone: "Asia/Kolkata",
+      }),
+      paymentMode = "CASH",
+      remarks,
+    } = req.body;
+
+    if (!startDate || !endDate || !paymentDate) {
+      return validationFailed(
+        res,
+        "Start Date, End Date and Payment Date are required.",
+        {}
+      );
+    }
+
+    const connection = await pool.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      const [summary] = await connection.query(
+        `
+        SELECT
+          COALESCE(SUM(quantity),0) AS totalQuantity,
+          COALESCE(SUM(totalAmount),0) AS totalAmount
+        FROM milk_sales
+        WHERE
+          customerId = ?
+          AND isActive = 1
+          AND saleDate BETWEEN ? AND ?
+        `,
+        [customerId, startDate, endDate]
+      );
+
+      if (summary[0].totalAmount == 0) {
+        await connection.rollback();
+
+        return validationFailed(
+          res,
+          "No milk sales found for the selected period.",
+          {}
+        );
+      }
+
+      const [payment] = await connection.query(
+        `
+        INSERT INTO customer_payments
+        (
+          customerId,
+          startDate,
+          endDate,
+          paymentDate,
+          amount,
+          paymentMode,
+          remarks,
+          createdBy
+        )
+        VALUES (?,?,?,?,?,?,?,?)
+        `,
+        [
+          customerId,
+          startDate,
+          endDate,
+          paymentDate,
+          summary[0].totalAmount,
+          paymentMode,
+          remarks,
+          createdBy,
+        ]
+      );
+
+      await connection.commit();
+
+      return success(res, "Customer bill generated successfully.", {
+        paymentId: payment.insertId,
+        totalQuantity: summary[0].totalQuantity,
+        totalAmount: summary[0].totalAmount,
+      });
+    } catch (err) {
+      await connection.rollback();
+      return failure(res, err.sql, err.message);
+    } finally {
+      connection.release();
+    }
 
   }
   

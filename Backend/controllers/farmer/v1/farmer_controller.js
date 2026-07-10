@@ -2,6 +2,7 @@ const pool = require("../../../config/pool");
 const { convertUTCtoIST } = require("../../../utils/helperfunction");
 const { validationFailed, success, failure, unauthorized } = require("../../../utils/response");
 
+
 module.exports={
     addFarmer : async(req, res) => {
         const {name, mobile, address} = req.body;
@@ -70,10 +71,10 @@ module.exports={
         try {
             const [result] = await pool.query(`UPDATE farmers SET ${key.join(", ")} WHERE farmerId = ?`,[...value, fid]);
             if(result.affectedRows <=0){
-        return unauthorized(res,"Farmer not found", {});
-      }else{
-        return success(res,"farmer updated successfully", result);
-      }
+                return unauthorized(res,"Farmer not found", {});
+            }else{
+                return success(res,"farmer updated successfully", result);
+            }
         } catch (err) {
             return failure(res,err.sql,err.message);
         }
@@ -81,91 +82,91 @@ module.exports={
 
     deleteFarmer : async(req,res)=>{
         const fid = req.params.id;
-    try {
-      const result = await pool.query(`UPDATE farmers SET isActive = 0 WHERE farmerId = ?`, [fid])
-    if(result[0].affectedRows <=0){
-      return unauthorized(res, "Farmer not found", {})
-    }else{
-      return success(res,"Farmer deleted successfully", result);
-    }
-    } catch (err) {
-      return failure(res,err.sql,err.message);
-    }
+        try {
+        const result = await pool.query(`UPDATE farmers SET isActive = 0 WHERE farmerId = ?`, [fid])
+        if(result[0].affectedRows <=0){
+        return unauthorized(res, "Farmer not found", {})
+        }else{
+        return success(res,"Farmer deleted successfully", result);
+        }
+        } catch (err) {
+        return failure(res,err.sql,err.message);
+        }
     },
 
 
     addMilkPurchase: async (req, res) => {
 
-    const fid = req.params.id;
-    const { quantity, remarks } = req.body;
-    const createdBy = req.user.id;
+        const fid = req.params.id;
+        const { quantity, remarks } = req.body;
+        const createdBy = req.user.id;
 
-    if (!quantity || quantity <= 0) {
-        return validationFailed(
-            res,
-            "Quantity is required.",
-            {}
-        );
-    }
-
-    try {
-        const [rate] = await pool.query(
-            `SELECT rateId, farmerRate
-             FROM milk_rates
-             WHERE isActive = 1
-             ORDER BY effectiveFrom DESC
-             LIMIT 1`
-        );
-
-        if (rate.length === 0) {
+        if (!quantity || quantity <= 0) {
             return validationFailed(
                 res,
-                "No active milk rate found.",
+                "Quantity is required.",
                 {}
             );
         }
 
-        const rateId = rate[0].rateId;
-        const farmerRate = parseFloat(rate[0].farmerRate);
+        try {
+            const [rate] = await pool.query(
+                `SELECT rateId, farmerRate
+                FROM milk_rates
+                WHERE isActive = 1
+                ORDER BY effectiveFrom DESC
+                LIMIT 1`
+            );
 
-        const totalAmount = Number(quantity) * farmerRate;
+            if (rate.length === 0) {
+                return validationFailed(
+                    res,
+                    "No active milk rate found.",
+                    {}
+                );
+            }
 
-        const [result] = await pool.query(
-            `INSERT INTO milk_purchase
-            (
-                farmerId,
-                quantity,
-                rateId,
-                totalAmount,
-                remarks,
-                createdBy
-            )
-            VALUES (?,?,?,?,?,?)`,
-            [
-                fid,
-                quantity,
-                rateId,
-                totalAmount,
-                remarks,
-                createdBy
-            ]
-        );
+            const rateId = rate[0].rateId;
+            const farmerRate = parseFloat(rate[0].farmerRate);
 
-        return success(
-            res,
-            "Milk Purchase Added Successfully",
-            result
-        );
+            const totalAmount = Number(quantity) * farmerRate;
 
-    } catch (err) {
+            const [result] = await pool.query(
+                `INSERT INTO milk_purchase
+                (
+                    farmerId,
+                    quantity,
+                    rateId,
+                    totalAmount,
+                    remarks,
+                    createdBy
+                )
+                VALUES (?,?,?,?,?,?)`,
+                [
+                    fid,
+                    quantity,
+                    rateId,
+                    totalAmount,
+                    remarks,
+                    createdBy
+                ]
+            );
 
-        return failure(
-            res,
-            err.sql,
-            err.message
-        );
+            return success(
+                res,
+                "Milk Purchase Added Successfully",
+                result
+            );
 
-    }
+        } catch (err) {
 
-},
+            return failure(
+                res,
+                err.sql,
+                err.message
+            );
+
+        }
+
+    },
 }
