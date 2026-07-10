@@ -43,8 +43,8 @@ module.exports={
                 return success(resp, "Requested Cutomer not found", [])
             }
             
-            result[0].createdAt = convertUTCtoIST(item.createdAt);
-            result[0].modifiedAt = convertUTCtoIST(item.modifiedAt);
+            result[0].createdAt = convertUTCtoIST(result[0].createdAt);
+            result[0].modifiedAt = convertUTCtoIST(result[0].modifiedAt);
 
             return success(resp, "Found Requested Customer Successfully",result);
         } catch (err) {
