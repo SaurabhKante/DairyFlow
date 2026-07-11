@@ -18,6 +18,13 @@ import CustomerList from './pages/CustomerList'
 import RecordMilkDeliver from './pages/RecordMilkDeliver'
 import AddCustomer from './pages/AddCustomer'
 import CustomerBill from './pages/CustomerBill'
+import Analytics from './pages/Analytics'
+import MilkPurchaseDetails from './pages/MilkPurchaseDetails'
+import MilkSellsDetails from './pages/MilkSellsDetails'
+import FarmerPaymentDetails from './pages/FarmerPaymentDetails'
+import CustomerPaymentDetails from './pages/CustomerPaymentDetails'
+import PendingFarmerPayments from './pages/PendingFarmerPayments'
+import PendingCustomerPayments from './pages/PendingCustomerPayments'
 
 function App() {
 
@@ -68,6 +75,62 @@ function App() {
     element={
         <AdminRoute>
             <CustomerBill />
+        </AdminRoute>
+    }
+/>
+        <Route
+    path="/data"
+    element={
+        <AdminRoute>
+            <Analytics />
+        </AdminRoute>
+    }
+/>
+        <Route
+    path="/milk-purchase-details"
+    element={
+        <AdminRoute>
+            <MilkPurchaseDetails />
+        </AdminRoute>
+    }
+/>
+        <Route
+    path="/milk-sells-details"
+    element={
+        <AdminRoute>
+            <MilkSellsDetails />
+        </AdminRoute>
+    }
+/>
+        <Route
+    path="/farmer-payment-details"
+    element={
+        <AdminRoute>
+            <FarmerPaymentDetails />
+        </AdminRoute>
+    }
+/>
+        <Route
+    path="/customer-payment-details"
+    element={
+        <AdminRoute>
+            <CustomerPaymentDetails />
+        </AdminRoute>
+    }
+/>
+        <Route
+    path="/pending-farmer-payments"
+    element={
+        <AdminRoute>
+            <PendingFarmerPayments />
+        </AdminRoute>
+    }
+/>
+        <Route
+    path="/pending-customer-payments"
+    element={
+        <AdminRoute>
+            <PendingCustomerPayments />
         </AdminRoute>
     }
 />
