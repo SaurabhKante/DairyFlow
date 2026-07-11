@@ -1,6 +1,5 @@
 
 import { Route, Routes } from 'react-router-dom'
-import './App.css'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import ProtectedRoute from './apiRouter/ProtectedRoute'
@@ -15,6 +14,10 @@ import FarmerList from './pages/FarmerList'
 import AddFarmer from './pages/AddFarmer'
 import RecordMilkIntake from './pages/RecordMilkIntake'
 import PayFarmer from './pages/PayFarmer'
+import CustomerList from './pages/CustomerList'
+import RecordMilkDeliver from './pages/RecordMilkDeliver'
+import AddCustomer from './pages/AddCustomer'
+import CustomerBill from './pages/CustomerBill'
 
 function App() {
 
@@ -41,8 +44,9 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/update-profile" element={<UpdateProfile />} />
         <Route path="/farmer-list" element={<FarmerList />} />
-        <Route path="/record-intake/:id" element={<RecordMilkIntake />}
-/>
+        <Route path="/customer-list" element={<CustomerList />} />
+        <Route path="/record-intake/:id" element={<RecordMilkIntake />}/>
+        <Route path="/record-deliver/:id" element={<RecordMilkDeliver />}/>
         <Route
     path="/users"
     element={
@@ -60,10 +64,26 @@ function App() {
     }
 />
         <Route
+    path="/customer-bill/:customerId"
+    element={
+        <AdminRoute>
+            <CustomerBill />
+        </AdminRoute>
+    }
+/>
+        <Route
     path="/add-farmer"
     element={
         <AdminRoute>
             <AddFarmer />
+        </AdminRoute>
+    }
+/>
+        <Route
+    path="/add-customer"
+    element={
+        <AdminRoute>
+            <AddCustomer />
         </AdminRoute>
     }
 />

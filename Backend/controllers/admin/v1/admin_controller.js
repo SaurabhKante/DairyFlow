@@ -233,10 +233,10 @@ module.exports = {
       `);
 
       if (result.length === 0) {
-        return success(res, "No Milk Sales Found", []);
+        return success(res, "No Milk Sells Found", []);
       }
 
-      return success(res, "Milk Sales Summary Fetched Successfully", result);
+      return success(res, "Milk Sells Summary Fetched Successfully", result);
     } catch (err) {
       return failure(res, err.sql, err.message);
   }
@@ -259,7 +259,7 @@ module.exports = {
     const [result] = await pool.query(
         `
         SELECT
-          ms.saleId,
+          ms.sellId,
           ms.createdAt,
           ms.quantity,
           mr.customerRate,
@@ -301,9 +301,9 @@ module.exports = {
         item.modifiedAt = convertUTCtoIST(item.modifiedAt);
       });
 
-      return success(res, "Customer Milk Sales Fetched Successfully", {
+      return success(res, "Customer Milk Sells Fetched Successfully", {
         summary: summary[0],
-        sales: result,
+        sells: result,
       });
     } catch (err) {
       return failure(res, err.sql, err.message);
@@ -358,7 +358,7 @@ module.exports = {
 
         return validationFailed(
           res,
-          "No milk sales found for the selected period.",
+          "No milk sells found for the selected period.",
           {}
         );
       }

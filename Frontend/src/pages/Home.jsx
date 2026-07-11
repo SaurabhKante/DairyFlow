@@ -94,7 +94,7 @@ const navigate = useNavigate();
               iconColor="text-blue-700"
               borderColor="border-blue-300"
               onClick={() => {
-                console.log("Customer Delivery");
+                navigate("/customer-list")
               }}
             />
 
