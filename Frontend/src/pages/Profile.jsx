@@ -6,7 +6,7 @@ import { UserPen, Users } from "lucide-react";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import PreferenceCard from "../components/profile/PreferenceCard";
 import LogoutButton from "../components/profile/LogoutButton";
-import BottomNavbar from "../components/home/BottomNavbar";
+import BottomNavbar from "../components/home/BottomNavBar";
 import { BASE_URL } from "../constants/baseUrl";
 
 

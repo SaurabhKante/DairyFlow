@@ -3,7 +3,7 @@ import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import PendingPersonCard from "../components/Analytics/PendingPersonCard";
+import PendingPersonCard from "../components/analytics/PendingPersonCard";
 import { BASE_URL } from "../constants/baseUrl";
 
 const PendingCustomerPayments = () => {

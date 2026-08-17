@@ -4,8 +4,8 @@ import axios from "axios";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
 
 import { BASE_URL } from "../constants/baseUrl";
-import SummaryCard from "../components/Analytics/SummaryCard";
-import ContributionCard from "../components/Analytics/ContributionCard";
+import SummaryCard from "../components/analytics/SummaryCard";
+import ContributionCard from "../components/analytics/ContributionCard";
 
 const MilkSellsDetails = () => {
   const navigate = useNavigate();

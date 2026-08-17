@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Tractor, Truck } from "lucide-react";
 
-import TopNavbar from "../components/home/TopNavbar";
+import TopNavbar from "../components/home/TopNavBar";
 import QuickActionCard from "../components/home/QuickActionCard";
-import BottomNavbar from "../components/home/BottomNavbar";
+import BottomNavbar from "../components/home/BottomNavBar";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../constants/baseUrl";
 

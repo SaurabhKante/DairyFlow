@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import AnalyticsHeader from "../components/Analytics/AnalyticsHeader";
-import MilkInventoryCard from "../components/Analytics/MilkInventoryCard";
-import FinancialCard from "../components/Analytics/FinancialCard";
-import CashFlowCard from "../components/Analytics/CashFlowCard";
+import AnalyticsHeader from "../components/analytics/AnalyticsHeader";
+import MilkInventoryCard from "../components/analytics/MilkInventoryCard";
+import FinancialCard from "../components/analytics/FinancialCard";
+import CashFlowCard from "../components/analytics/CashFlowCard";
 import PendingSettlementCard from "../components/analytics/PendingSettlementCard";
 
 import BottomNavbar from "../components/home/BottomNavBar";

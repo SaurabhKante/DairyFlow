@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 
-import PaymentPersonCard from "../components/Analytics/PaymentPersonCard";
+import PaymentPersonCard from "../components/analytics/PaymentPersonCard";
 import { BASE_URL } from "../constants/baseUrl";
 
 const CustomerPaymentDetails = () => {
