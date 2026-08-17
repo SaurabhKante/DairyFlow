@@ -1,0 +1,10 @@
+# Root-level gitignore for MilkMist monorepo
+
+# Environment files — never commit secrets
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db

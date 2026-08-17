@@ -1,0 +1,91 @@
+# ─────────────────────────────────────────────────────────────
+#  MilkMist — Docker Compose
+#
+#  Services:
+#    db       → MySQL 8.0  (internal only, volume-persisted)
+#    backend  → Node.js Express API  (port 3000)
+#    frontend → React SPA via Nginx  (port 80)
+#
+#  Usage (on EC2):
+#    1. Set your EC2 public IP in the build-arg below OR pass it:
+#       VITE_API_BASE_URL=http://<YOUR-EC2-IP>:3000/api docker compose up -d --build
+#
+#    2. Default: docker compose up -d --build
+# ─────────────────────────────────────────────────────────────
+
+services:
+
+  # ── MySQL Database ────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: milkmist_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword123}
+      MYSQL_DATABASE: ${DB_NAME:-milkmistdb}
+      MYSQL_USER: ${DB_USER:-milkmist_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-milkmist_pass}
+    volumes:
+      # Persist database data across container restarts
+      - mysql_data:/var/lib/mysql
+      # Auto-import schema + seed data on first start
+      - ./milkmistdb.sql:/docker-entrypoint-initdb.d/milkmistdb.sql:ro
+    networks:
+      - milkmist_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── Node.js Backend ───────────────────────────────────────
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: milkmist_backend
+    restart: unless-stopped
+    environment:
+      PORT: ${PORT:-3000}
+      DB_HOST: db                          # Docker service name, NOT localhost
+      DB_USER: ${DB_USER:-milkmist_user}
+      DB_PASSWORD: ${DB_PASSWORD:-milkmist_pass}
+      DB_NAME: ${DB_NAME:-milkmistdb}
+      JWT_SECRET: ${JWT_SECRET:-change_this_secret_in_production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-25d}
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy         # Wait until MySQL is accepting connections
+    networks:
+      - milkmist_net
+
+  # ── React Frontend (Nginx) ────────────────────────────────
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+        # The browser calls this URL — must be the EC2 public IP/domain
+        # Override via: VITE_API_BASE_URL=http://<EC2-IP>:3000/api docker compose up --build
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000/api}
+    container_name: milkmist_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - milkmist_net
+
+# ── Named Volumes ─────────────────────────────────────────
+volumes:
+  mysql_data:
+    driver: local
+
+# ── Networks ──────────────────────────────────────────────
+networks:
+  milkmist_net:
+    driver: bridge
