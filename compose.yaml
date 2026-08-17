@@ -1,16 +1,5 @@
 # ─────────────────────────────────────────────────────────────
-#  MilkMist — Docker Compose
-#
-#  Services:
-#    db       → MySQL 8.0  (internal only, volume-persisted)
-#    backend  → Node.js Express API  (port 3000)
-#    frontend → React SPA via Nginx  (port 80)
-#
-#  Usage (on EC2):
-#    1. Set your EC2 public IP in the build-arg below OR pass it:
-#       VITE_API_BASE_URL=http://<YOUR-EC2-IP>:3000/api docker compose up -d --build
-#
-#    2. Default: docker compose up -d --build
+#  MilkMist — Docker Compose (HTTPS & Nginx Reverse Proxy)
 # ─────────────────────────────────────────────────────────────
 
 services:
@@ -26,9 +15,7 @@ services:
       MYSQL_USER: ${DB_USER:-milkmist_user}
       MYSQL_PASSWORD: ${DB_PASSWORD:-milkmist_pass}
     volumes:
-      # Persist database data across container restarts
       - mysql_data:/var/lib/mysql
-      # Auto-import schema + seed data on first start
       - ./milkmistdb.sql:/docker-entrypoint-initdb.d/milkmistdb.sql:ro
     networks:
       - milkmist_net
@@ -48,33 +35,36 @@ services:
     restart: unless-stopped
     environment:
       PORT: ${PORT:-3000}
-      DB_HOST: db                          # Docker service name, NOT localhost
+      DB_HOST: db
       DB_USER: ${DB_USER:-milkmist_user}
       DB_PASSWORD: ${DB_PASSWORD:-milkmist_pass}
       DB_NAME: ${DB_NAME:-milkmistdb}
       JWT_SECRET: ${JWT_SECRET:-change_this_secret_in_production}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-25d}
-    ports:
-      - "3000:3000"
+    # Port 3000 is intentionally NOT exposed to the internet anymore for security.
+    # Nginx securely proxies traffic to this backend over the internal Docker network.
     depends_on:
       db:
-        condition: service_healthy         # Wait until MySQL is accepting connections
+        condition: service_healthy
     networks:
       - milkmist_net
 
-  # ── React Frontend (Nginx) ────────────────────────────────
+  # ── React Frontend (Nginx HTTPS Reverse Proxy) ────────────
   frontend:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
       args:
-        # The browser calls this URL — must be the EC2 public IP/domain
-        # Override via: VITE_API_BASE_URL=http://<EC2-IP>:3000/api docker compose up --build
         VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000/api}
     container_name: milkmist_frontend
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      # Mount shared volumes for SSL certificates
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     depends_on:
       - backend
     networks:
