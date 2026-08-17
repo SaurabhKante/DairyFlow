@@ -1,5 +1,5 @@
-import AddCustomerForm from "../components/customer/AddCustomer/AddCustomerForm";
-import AddCustomerHeader from "../components/customer/AddCustomer/AddCustomerHeader";
+import AddCustomerForm from "../components/customer/addCustomer/AddCustomerForm";
+import AddCustomerHeader from "../components/customer/addCustomer/AddCustomerHeader";
 
 
 const AddCustomer = () => {
