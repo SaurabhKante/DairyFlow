@@ -2,7 +2,7 @@
 #  MilkMist — Backend Dockerfile
 #  Node.js 20 LTS (Alpine) – Production Image
 # ─────────────────────────────────────────────
-FROM node:20-alpine
+FROM node:22-alpine
 
 # Install OS deps needed by bcrypt's native bindings
 RUN apk add --no-cache python3 make g++
